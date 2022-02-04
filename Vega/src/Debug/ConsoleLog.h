@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <utility>
+#include <mutex>
 
 //#define DEBUG
 #define USE_LOG
@@ -92,12 +93,14 @@ namespace LM
 
 		static void Init()
 		{
+			std::unique_lock Lock(s_Mtx);
 			std::system("cls");
 		}
 
 		template<typename ...Args>
 		static void LogInfo(Args && ...args)
 		{
+			std::unique_lock Lock(s_Mtx);
 			SetColor(ConsoleTxtColor::Green);
 			std::cerr << "[ INFO ]: ";
 			(std::cerr << ... << args) << ' ';
@@ -108,6 +111,7 @@ namespace LM
 		template<typename ...Args>
 		static void LogWarning(Args && ...args)
 		{
+			std::unique_lock Lock(s_Mtx);
 			SetColor(ConsoleTxtColor::Yellow);
 			std::cerr << "[ WARNING ]: ";
 			(std::cerr << ... << args) << ' ';
@@ -118,6 +122,7 @@ namespace LM
 		template<typename ...Args>
 		static void LogError(Args && ...args)
 		{
+			std::unique_lock Lock(s_Mtx);
 			SetColor(ConsoleTxtColor::Red);
 			std::cerr << "[ ERROR ]: ";
 			(std::cerr << ... << args) << ' ';
@@ -132,6 +137,8 @@ namespace LM
 			printf("========================================\n");
 			SetColor();
 		}
+		protected:
+			inline static std::mutex s_Mtx;
 	};
 
 }
